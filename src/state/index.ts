@@ -1,19 +1,23 @@
-import { readonly } from "vue";
-import { settings, refreshSettings, updateSettings } from "./settings";
-import { translations, saveTranslations, addTranslation } from "./translations";
-import { permissions } from "./permissions";
+import { LocalStorageType, localStorage } from "./store";
+import Settings from "./settings";
+import Translations from "./translations";
 
-const state = {
-  settings: readonly(settings),
-  updateSettings,
-  refreshSettings,
+export default class State {
+  private _storage: LocalStorageType;
+  private _translations: Translations;
+  private _settings: Settings;
 
-  translations: readonly(translations),
-  saveTranslations,
-  addTranslation,
+  constructor() {
+    this._storage = localStorage;
+    this._translations = new Translations(this._storage);
+    this._settings = new Settings(this._storage);
+  }
 
-  permissions: readonly(permissions),
-};
+  get translations(): Translations {
+    return this._translations;
+  }
 
-export type StateType = typeof state;
-export default state;
+  get settings(): Settings {
+    return this._settings;
+  }
+}

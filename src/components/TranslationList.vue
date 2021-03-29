@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { Translation } from "@/state/translations";
+import { TT } from "@/state/translations";
 import { defineComponent } from "vue";
 import TranslationRow from "./TranslationRow.vue";
 
@@ -42,12 +42,12 @@ export default defineComponent({
   },
 
   computed: {
-    translationList(): Translation[] {
+    translationList(): TT[] {
       const selector = this.sortBy.slice(1);
       const reverse = this.sortBy[0] === "-";
       return this.translations
         .slice()
-        .sort((a: Translation, b: Translation) =>
+        .sort((a: TT, b: TT) =>
           reverse ? a[selector] > b[selector] : a[selector] < b[selector]
         );
     },

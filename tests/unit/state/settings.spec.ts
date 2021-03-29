@@ -1,35 +1,35 @@
 import chai, { expect } from "chai";
 import spies from "chai-spies";
-import { settings, updateSettings, refreshSettings } from "@/state/settings";
-import { SETTINGS_STORAGE_KEY, localStorage } from "@/state/store";
+import Settings from "@/state/settings";
+import { SETTINGS_STORAGE_KEY } from "@/state/store";
 
 chai.use(spies);
 
 describe("state/settings.ts", () => {
   it("saves settings to local store on update", () => {
+    const localStorage = {
+      getItem: () => null,
+      setItem: () => {
+        /* */
+      },
+    };
+
     const newSettings = {
       languages: ["en", "ja", "kr", "fr"],
       translationFilename: "some{name}.csv",
       translationTemplate: "{lang}.{key}:{value}",
     };
 
-    let usedKey = "";
-    let usedData = "";
+    const storageSpy = chai.spy.on(localStorage, "setItem");
 
-    const storageSpy = chai.spy.on(
-      localStorage,
-      "setItem",
-      (key: string, data: string) => {
-        usedKey = key;
-        usedData = data;
-      }
+    const subject = new Settings(localStorage);
+
+    subject.update(newSettings);
+
+    expect(storageSpy).to.have.been.called.with(
+      SETTINGS_STORAGE_KEY,
+      JSON.stringify(newSettings)
     );
-
-    updateSettings(newSettings);
-
-    expect(usedKey).to.be.eq(SETTINGS_STORAGE_KEY);
-    expect(storageSpy).to.have.been.called();
-    expect(JSON.parse(usedData)).to.have.deep.keys(newSettings);
   });
 
   it("updates stored settings on update", () => {
@@ -37,7 +37,15 @@ describe("state/settings.ts", () => {
     const translationFilename = "some{name}.csv";
     const translationTemplate = "{lang}.{key}:{value}";
 
-    updateSettings({
+    const localStorage = {
+      getItem: () => null,
+      setItem: () => {
+        /* */
+      },
+    };
+    const settings = new Settings(localStorage);
+
+    settings.update({
       languages,
       translationFilename,
       translationTemplate,
@@ -55,16 +63,20 @@ describe("state/settings.ts", () => {
       translationTemplate: "{name}:{key}:{value}",
     };
 
-    let calledKey = "";
+    const localStorage = {
+      getItem: () => null,
+      setItem: () => {
+        /* */
+      },
+    };
 
-    const storageSpy = chai.spy.on(localStorage, "getItem", (key: string) => {
-      calledKey = key;
+    const storageSpy = chai.spy.on(localStorage, "getItem", () => {
       return JSON.stringify(stored);
     });
 
-    refreshSettings();
+    const settings = new Settings(localStorage);
+
     expect(storageSpy).to.have.been.called.with(SETTINGS_STORAGE_KEY);
-    expect(calledKey).to.be.eq(SETTINGS_STORAGE_KEY);
     expect(settings).to.deep.contain(stored);
   });
 });

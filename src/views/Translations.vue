@@ -14,20 +14,20 @@
 <script lang="ts">
 import { defineComponent, inject } from "vue";
 import TranslationList from "@/components/TranslationList.vue";
-import { StateType } from "@/state";
+import State from "@/state";
 
 export default defineComponent({
   setup() {
     type TT = { [id: string]: string; key: string };
-    const state = inject("state") as StateType;
+    const state = inject("state") as State;
     const addEmpty = () => {
       const entry = { key: "" } as TT;
       state.settings.languages.forEach((lang) => (entry[lang] = ""));
-      state.addTranslation(entry);
+      state.translations.update(entry);
     };
 
     return {
-      translations: state.translations,
+      translations: state.translations.values,
       languages: state.settings.languages,
       addEmpty,
     };

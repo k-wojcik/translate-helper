@@ -9,7 +9,7 @@ chai.use(spies);
 describe("Translations.vue", () => {
   type TT = { [id: string]: string };
   let state = {
-    translations: [] as TT[],
+    translations: { values: [] as TT[] },
     settings: {
       languages: [] as string[],
       translationTemplate: "",
@@ -23,7 +23,7 @@ describe("Translations.vue", () => {
 
   beforeEach(() => {
     state = {
-      translations: [],
+      translations: { values: [] },
       settings: {
         languages: [],
         translationTemplate: "",
@@ -46,15 +46,15 @@ describe("Translations.vue", () => {
   it("passes list and languages from store", () => {
     const child = wrapper!.getComponent({ name: "TranslationList" });
     expect(child.props()).to.be.eql({
-      translations: state.translations,
+      translations: state.translations.values,
       languages: state.settings.languages,
     });
   });
 
   it("add new translation on button click", async () => {
     state.settings.languages = ["en", "ja"];
-    const spy = chai.spy.on(state, "addTranslation", (t: TT) => {
-      state.translations.push(t);
+    const spy = chai.spy.on(state.translations, "update", (t: TT) => {
+      state.translations.values.push(t);
     });
 
     const button = wrapper!.find("button.add");
