@@ -1,16 +1,17 @@
 <template>
   <table class="translation-list">
     <tr>
-      <th>Key</th>
-      <th v-for="lang in languages" :key="lang">
+      <th @click="setSortBy('key')">Key</th>
+      <th v-for="lang in langs" :key="lang" @click="setSortBy(lang)">
         {{ lang }}
       </th>
+      <th></th>
     </tr>
     <translation-row
-      v-for="translation in translationList"
+      v-for="translation in sortedList"
       :key="translation.key"
       :item="translation"
-      :languages="languages"
+      :languages="langs"
     >
     </translation-row>
   </table>
@@ -18,10 +19,32 @@
 
 <script lang="ts">
 import { TT } from "@/state/translations";
-import { defineComponent } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import TranslationRow from "./TranslationRow.vue";
 
 export default defineComponent({
+  setup(props) {
+    const sortBy = ref("+key");
+    const sortedList = computed(() => {
+      const sorter = sortBy.value;
+      const selector = sorter.slice(1);
+      const reverse = sorter.slice() === "-";
+      return props.translations
+        .slice()
+        .sort((a: TT, b: TT) =>
+          reverse ? a[selector] > b[selector] : a[selector] < b[selector]
+        );
+    });
+
+    return {
+      items: props.translations,
+      langs: props.languages,
+      sortedList,
+    };
+  },
+  components: {
+    TranslationRow,
+  },
   props: {
     translations: {
       type: Object,
@@ -30,26 +53,6 @@ export default defineComponent({
     languages: {
       type: Array,
       required: true,
-    },
-  },
-  components: {
-    TranslationRow,
-  },
-  data() {
-    return {
-      sortBy: "+key",
-    };
-  },
-
-  computed: {
-    translationList(): TT[] {
-      const selector = this.sortBy.slice(1);
-      const reverse = this.sortBy[0] === "-";
-      return this.translations
-        .slice()
-        .sort((a: TT, b: TT) =>
-          reverse ? a[selector] > b[selector] : a[selector] < b[selector]
-        );
     },
   },
 });

@@ -59,10 +59,11 @@ describe("state/translations.ts", () => {
     });
   });
 
-  it("drops all data to local storage on save", () => {
+  it("drops all data to local storage on save", async () => {
     const translations = new Translations(storage);
     const spy = chai.spy.on(storage, "setItem");
     translations.update({ key: "zzz", en: "abc" });
+    await translations.connect();
     expect(spy).to.have.been.called.once.with(
       JSON.stringify([{ key: "zzz", en: "abc" }])
     );

@@ -1,12 +1,12 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
-import Home from "../views/Home.vue";
 import Translations from "../views/Translations.vue";
+import Settings from "@/views/Settings.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     name: "Home",
-    component: Home,
+    component: Translations,
   },
   {
     path: "/about",
@@ -18,10 +18,10 @@ const routes: Array<RouteRecordRaw> = [
       import(/* webpackChunkName: "about" */ "../views/About.vue"),
   },
   {
-    path: "/translations",
-    name: "Translations",
-    component: Translations,
-  },
+    path: "/settings",
+    name: "Settings",
+    component: Settings,
+  }
 ];
 
 const router = createRouter({
