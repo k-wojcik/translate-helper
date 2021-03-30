@@ -93,22 +93,24 @@ export default defineComponent({
     };
 
     const enumTranslations = () => {
-      return state.translations.values.flatMap((val) => {
-        return state.settings.languages.map((lang) => ({
-          key: val.key,
-          lang: lang,
-          value: val[lang] || ''
-        }));
-      }).filter(x => !!x.value && !!x.key && !!x.lang);
+      return state.translations.values
+        .flatMap((val) => {
+          return state.settings.languages.map((lang) => ({
+            key: val.key,
+            lang: lang,
+            value: val[lang] || "",
+          }));
+        })
+        .filter((x) => !!x.value && !!x.key && !!x.lang);
     };
 
     const getDataEncoded = function (): string {
       return encodeURIComponent(
         state.settings.translationTemplate.prefix +
-        enumTranslations()
-          .map((x) => format(state.settings.translationTemplate.each, x))
-          .join("") +
-        state.settings.translationTemplate.suffix
+          enumTranslations()
+            .map((x) => format(state.settings.translationTemplate.each, x))
+            .join("") +
+          state.settings.translationTemplate.suffix
       );
     };
 
@@ -123,9 +125,9 @@ export default defineComponent({
       fileDownload.value?.setAttribute("href", "");
       fileDownload.value?.setAttribute("download", "");
     };
-    
+
     const clear = () => {
-      state.translations.values.splice(0, state.translations.values.length-1);
+      state.translations.values.splice(0, state.translations.values.length - 1);
     };
 
     return {
