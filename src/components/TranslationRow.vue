@@ -20,8 +20,9 @@ export default defineComponent({
     const updateValue = async () => {
       await state.translations.saveAsync();
     };
-    const deleteRow = (key: string) => {
+    const deleteRow = async (key: string) => {
       state.translations.deleteRow(key);
+      state.translations.save();
     };
     const hasMultiple = (key: string) => {
       return state.translations.values.filter((x) => x.key === key).length > 1;

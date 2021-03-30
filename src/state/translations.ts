@@ -59,7 +59,6 @@ export default class Translations {
       TRANSLATIONS_STORAGE_KEY,
       JSON.stringify(this._values)
     );
-    console.log("save");
     if (!this._values.some((x) => !x.key)) {
       this._values.push({ key: "" });
     }
