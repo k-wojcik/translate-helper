@@ -1,15 +1,25 @@
 import { reactive } from "vue";
 import { SETTINGS_STORAGE_KEY, LocalStorageType } from "./store";
 
+export interface TranslationTemplate {
+  each: string;
+  prefix: string;
+  suffix: string;
+}
+
 export interface SettingsData {
-  translationTemplate: string;
+  translationTemplate: TranslationTemplate;
   translationFilename: string;
   languages: string[];
 }
 
 export function defaultSettings(): SettingsData {
   return {
-    translationTemplate: "{key}\t{value}\t{lang}",
+    translationTemplate: {
+      prefix: "",
+      suffix: "",
+      each: "{key}\t{value}\t{lang}",
+    },
     translationFilename: "{name}.csv",
     languages: ["EN", "PL"],
   };
@@ -32,7 +42,7 @@ export default class Settings {
     return this._data.languages;
   }
 
-  get translationTemplate(): string {
+  get translationTemplate(): TranslationTemplate {
     return this._data.translationTemplate;
   }
 
@@ -40,10 +50,12 @@ export default class Settings {
     return this._data.translationFilename;
   }
 
-  update(newValues: SettingsData): void {
-    this._storage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(newValues));
-    this._data.translationTemplate = newValues.translationTemplate;
-    this._data.translationFilename = newValues.translationFilename;
-    this._data.languages = newValues.languages;
+  update(data: SettingsData): void {
+    this._storage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(data));
+    this._data.translationTemplate.prefix = data.translationTemplate.prefix;
+    this._data.translationTemplate.suffix = data.translationTemplate.suffix;
+    this._data.translationTemplate.each = data.translationTemplate.each;
+    this._data.translationFilename = data.translationFilename;
+    this._data.languages = data.languages;
   }
 }

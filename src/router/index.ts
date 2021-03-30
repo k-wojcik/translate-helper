@@ -21,7 +21,7 @@ const routes: Array<RouteRecordRaw> = [
     path: "/settings",
     name: "Settings",
     component: Settings,
-  }
+  },
 ];
 
 const router = createRouter({
