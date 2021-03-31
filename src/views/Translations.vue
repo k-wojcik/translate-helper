@@ -8,7 +8,9 @@
       <fa-icon icon="cloud-download-alt" class="fas icon"></fa-icon>
       <div v-if="nameFieldShown">
         <input type="text" v-model="nameField" placeholder="Export name" />
-        <button @click="onSetNameClick">Download</button>
+        <button @click="onSetNameClick" class="download-confirm">
+          Download
+        </button>
       </div>
     </button>
     <button @click="clear" class="reset">
@@ -162,6 +164,13 @@ button {
   margin: 10px;
 
   outline: 0;
+
+  &.download-confirm {
+    background: lightblue;
+    border: 1px solid blue;
+    padding: 3px;
+    color: black;
+  }
 
   .icon {
     width: 48px;
