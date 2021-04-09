@@ -2,6 +2,8 @@
 
 Standalone vue3 app - scratchbook for translation and permission list to deal with later on.
 
+[Hosted web](https://asmnh.github.io/translate-helper/#/)
+
 ## Project setup
 ```
 npm install
