@@ -17,10 +17,8 @@ on:
       - main
       - dist
   pull_request:
-    paths:
-      - '*.js'
-      - '*.ts'
-      - '*.vue'
+    branches:
+      - '**'
   schedule:
     - cron: '26 0 * * 4'
 

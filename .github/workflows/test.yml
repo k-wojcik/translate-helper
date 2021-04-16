@@ -1,10 +1,8 @@
 name: Run tests
 on:
   pull_request:
-    paths:
-      - '*.js'
-      - '*.ts'
-      - '*.vue'
+    branches:
+      - '**'
 
 jobs:
   build-and-deploy:
@@ -28,7 +26,7 @@ jobs:
           npm run lint
 
           # exit if nothing has changed
-          [[ `git status --porcelain` ]] || exit
+          [[ `git status --porcelain` ]] || exit 0
 
           git checkout "${GITHUB_HEAD_REF}"
 
