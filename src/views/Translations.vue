@@ -120,12 +120,15 @@ export default defineComponent({
       await state.translations.connect();
       const filename = await getFilename();
       const href = `data:text/plain;charset=utf-8,${getDataEncoded()}`;
-      fileDownload.value?.setAttribute("href", href);
-      fileDownload.value?.setAttribute("download", filename);
-      await fileDownload.value?.click();
-      await nextTick();
-      fileDownload.value?.setAttribute("href", "");
-      fileDownload.value?.setAttribute("download", "");
+      if (fileDownload.value) {
+        const downloadElem = fileDownload.value;
+        downloadElem.setAttribute("href", href);
+        downloadElem.setAttribute("download", filename);
+        await downloadElem.click();
+        await nextTick();
+        downloadElem.setAttribute("href", "");
+        downloadElem.setAttribute("download", "");
+      }
     };
 
     const clear = () => {

@@ -61,8 +61,9 @@
       All data are stored locally, using browser's local storage for page. No
       data is being sent or uploaded anywhere, there's no tracking on the site.
       All code is available open source
-      <a href="https://github.com/asmnh/translate-helper" target="_blank">on Github</a>,
-      including build process.
+      <a href="https://github.com/asmnh/translate-helper" target="_blank"
+        >on Github</a
+      >, including build process.
     </p>
   </div>
 </template>
