@@ -36,6 +36,14 @@
         <pre>{value}</pre>
         for translated text.
       </li>
+      <li>
+        <strong>Translation sources</strong> - optional, URL to translations
+        JSON (a JSON that keeps translations as JSON object, with dot-path
+        allowing to access nodes/leafs), to check whether newly added
+        translations conflict with existing ones. Downloaded translations are
+        cached locally in browser, and are refreshed every time you load page or
+        save settings.
+      </li>
     </ul>
     <h2>Usage</h2>
     <p>
