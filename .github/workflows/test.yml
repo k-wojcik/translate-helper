@@ -1,0 +1,41 @@
+name: Run tests
+on:
+  pull_request:
+    paths:
+      - '*.js'
+      - '*.ts'
+      - '*.vue'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build
+        run: |
+          npm ci
+
+      - name: Run tests
+        run: |
+          npm run test:unit
+
+      - name: Lint and push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm run lint
+
+          # exit if nothing has changed
+          [[ `git status --porcelain` ]] || exit
+
+          git checkout "${GITHUB_HEAD_REF}"
+
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@users.noreply.github.com"
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+
+          git add .
+          git commit -am "lint: automated linter"
+          git push -u origin ${GITHUB_HEAD_REF}
