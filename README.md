@@ -12,7 +12,7 @@ For development info see [Development](docs/development.md).
 |-------|--------|
 | Deploy | [![Build and Deploy](https://github.com/asmnh/translate-helper/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/asmnh/translate-helper/actions/workflows/deploy.yml) |
 | CodeQL | [![CodeQL](https://github.com/asmnh/translate-helper/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/asmnh/translate-helper/actions/workflows/codeql-analysis.yml) |
-| Tests | [![Run tests](https://github.com/asmnh/translate-helper/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/asmnh/translate-helper/actions/workflows/test.yml) |
+| Tests | [![Run tests](https://github.com/asmnh/translate-helper/actions/workflows/test.yml/badge.svg?branch=main&event=push)](https://github.com/asmnh/translate-helper/actions/workflows/test.yml) |
 
 ## What it does
 
