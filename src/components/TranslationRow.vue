@@ -1,6 +1,13 @@
 <template>
-  <tr :class="{ conflict: hasMultiple(data.key) }">
-    <td><input type="text" v-model.lazy="data.key" @change="updateValue" /></td>
+  <tr :class="{ conflict: status.duplicate || status.conflict }">
+    <td>
+      <input
+        type="text"
+        v-model.lazy="data.key"
+        @change="updateValue"
+        class="key-field"
+      />
+    </td>
     <td v-for="lang in langs" :key="lang">
       <input type="text" v-model.lazy="data[lang]" @change="updateValue" />
     </td>
@@ -12,20 +19,26 @@
 
 <script lang="ts">
 import State from "@/state";
-import { defineComponent, inject } from "vue";
+import { defineComponent, inject, reactive } from "vue";
 
 export default defineComponent({
   setup(props) {
     const state = inject("state") as State;
+    const hasMultiple = (key: string) => {
+      return state.translations.values.filter((x) => x.key === key).length > 1;
+    };
+    const status = reactive({
+      duplicate: hasMultiple(props.item.key),
+      conflict: !state.translations.existing.allowsKey(props.item.key),
+    });
     const updateValue = async () => {
+      status.conflict = !state.translations.existing.allowsKey(props.item.key);
+      status.duplicate = hasMultiple(props.item.key);
       await state.translations.saveAsync();
     };
     const deleteRow = async (key: string) => {
       state.translations.deleteRow(key);
       state.translations.save();
-    };
-    const hasMultiple = (key: string) => {
-      return state.translations.values.filter((x) => x.key === key).length > 1;
     };
     return {
       data: props.item,
@@ -33,6 +46,7 @@ export default defineComponent({
       updateValue,
       deleteRow,
       hasMultiple,
+      status,
     };
   },
   props: {
@@ -50,7 +64,9 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .conflict {
-  border: 2px solid red;
+  .key-field {
+    background: #ffcccb;
+  }
 }
 input {
   font-size: 18px;

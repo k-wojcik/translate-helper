@@ -44,6 +44,35 @@
         <button @click="removeLang(lang.name)">X</button>
       </div>
     </div>
+    <h2>Existing external translations</h2>
+    <div>
+      <label for="translationsSourceUrl">Translation sources</label>
+      <input
+        type="text"
+        v-model="translationSourceUri"
+        placeholder="Translation source uri"
+      />
+      <div class="download-status">
+        <fa-icon
+          icon="sync"
+          class="fas icon"
+          v-if="downloadStatus.downloading.value"
+        ></fa-icon>
+        <fa-icon
+          icon="check-square"
+          class="fas icon"
+          v-if="
+            downloadStatus.downloaded.value && !downloadStatus.downloading.value
+          "
+        ></fa-icon>
+        <fa-icon
+          icon="check-square"
+          class="fas icon"
+          v-if="downloadError && !downloadStatus.downloading.value"
+        ></fa-icon>
+      </div>
+    </div>
+    <hr />
     <div>
       <button @click="save">Save</button>
       <button @click="reload">Cancel</button>
@@ -58,7 +87,12 @@ import { defineComponent, inject } from "vue";
 export default defineComponent({
   setup() {
     const state = inject("state") as State;
-    return { settings: state.settings };
+    const downloadStatus = state.translations.existing.downloadStatus;
+    return {
+      settings: state.settings,
+      downloadStatus,
+      existingTranslations: state.translations.existing,
+    };
   },
   data() {
     return {
@@ -67,6 +101,8 @@ export default defineComponent({
       suffix: "",
       filenameTemplate: "",
       languages: [] as { name: string }[],
+      translationSourceUri: "",
+      downloadError: false,
     };
   },
   methods: {
@@ -89,14 +125,33 @@ export default defineComponent({
         },
         translationFilename: this.filenameTemplate,
         languages: this.languages.map((x) => x.name),
+        translationsSourceUri: this.translationSourceUri,
       });
+      this.downloadTranslations();
     },
+
+    async downloadTranslations() {
+      this.downloadError = false;
+      if (!this.settings.translationsSourceUri) {
+        return;
+      }
+      try {
+        await this.existingTranslations.download(
+          this.settings.translationsSourceUri
+        );
+      } catch (e) {
+        console.log(e);
+        this.downloadError = true;
+      }
+    },
+
     reload() {
       this.templateString = this.settings.translationTemplate.each;
       this.prefix = this.settings.translationTemplate.prefix;
       this.suffix = this.settings.translationTemplate.suffix;
       this.filenameTemplate = this.settings.translationFilename;
       this.languages = this.settings.languages.map((x) => ({ name: x }));
+      this.translationSourceUri = this.settings.translationsSourceUri || "";
     },
   },
   mounted() {
@@ -125,6 +180,14 @@ div.settings-fields {
   }
   textarea {
     height: 8em;
+  }
+
+  div.download-status {
+    float: left;
+    * {
+      width: 1em;
+      height: 1em;
+    }
   }
 }
 </style>

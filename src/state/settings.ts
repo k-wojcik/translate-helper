@@ -11,6 +11,7 @@ export interface SettingsData {
   translationTemplate: TranslationTemplate;
   translationFilename: string;
   languages: string[];
+  translationsSourceUri?: string;
 }
 
 export function defaultSettings(): SettingsData {
@@ -50,6 +51,10 @@ export default class Settings {
     return this._data.translationFilename;
   }
 
+  get translationsSourceUri(): string | null {
+    return this._data.translationsSourceUri || null;
+  }
+
   update(data: SettingsData): void {
     this._storage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(data));
     this._data.translationTemplate.prefix = data.translationTemplate.prefix;
@@ -57,5 +62,6 @@ export default class Settings {
     this._data.translationTemplate.each = data.translationTemplate.each;
     this._data.translationFilename = data.translationFilename;
     this._data.languages = data.languages;
+    this._data.translationsSourceUri = data.translationsSourceUri;
   }
 }
