@@ -13,9 +13,20 @@
         </button>
       </div>
     </button>
+	<button @click="makeImport" class="import">
+      <fa-icon icon="cloud-upload-alt" class="fas icon"></fa-icon>	  
+    </button>
     <button @click="clear" class="reset">
       <fa-icon icon="window-close" class="fas icon"></fa-icon>
     </button>
+	
+	<div v-if="showImportField">
+      CSV file:
+      <input
+              type="file"
+              @change="onImportFileChange"/>
+    </div> 
+	
     <div><span v-if="saving"></span></div>
     <div class="list">
       <translation-list
@@ -37,6 +48,7 @@
 import { defineComponent, inject, nextTick, Ref, ref } from "vue";
 import TranslationList from "@/components/TranslationList.vue";
 import State from "@/state";
+import Papa, {ParseResult} from 'papaparse';
 
 export default defineComponent({
   setup() {
@@ -51,6 +63,7 @@ export default defineComponent({
 
     const nameField = ref("");
     const nameFieldShown = ref(false);
+	const showImportField = ref(false);
 
     const showNameField = async (): Promise<void> => {
       if (nameField.value) {
@@ -131,6 +144,38 @@ export default defineComponent({
       }
     };
 
+    const makeImport = async (): Promise<void> => {
+      showImportField.value = !showImportField.value;
+    };
+
+	const onImportFileChange = async (event: any): Promise<void> => {
+      const files = event.target.files;
+      const file = files[0];
+      Papa.parse(file, {
+        complete: function(result: ParseResult<string[]>) {
+          const header = result.data[0];
+          const map = new Map<string, number>();
+          header.map((value, index) => map.set(value, index));
+
+          for (let i = 1; i < result.data.length; i++){
+            const row = result.data[i];
+            const key = map.get("KEY");
+            if(key === undefined){
+              continue;
+            }
+            const entry = { key: row[key] } as TT;
+            state.settings.languages.forEach((lang) => {
+              const value = map.get(lang);
+              if (value !== undefined){
+                entry[lang] = row[value];
+              }
+            });
+            state.translations.update(entry);
+          }
+        }
+      });
+    };
+
     const clear = () => {
       state.translations.values.splice(0, state.translations.values.length - 1);
     };
@@ -146,6 +191,9 @@ export default defineComponent({
       onSetNameClick: useName,
       nameField,
       clear,
+	  makeImport,
+	  showImportField,
+	  onImportFileChange
     };
   },
   components: {
